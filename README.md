@@ -1,123 +1,115 @@
-# 🫁 Pneumonia Detection using CNN & Transfer Learning
+# Pneumonia Detection from Chest X-Ray Images Using CNN and Transfer Learning
 
-## 📌 Project Overview
+## Overview
 
-This project presents an automated pneumonia detection system using Chest X-ray images and Deep Learning. A Convolutional Neural Network (CNN) with Transfer Learning based on the VGG16 architecture was developed to classify chest X-ray images into two categories:
+This project presents a deep learning approach for automated pneumonia detection from chest X-ray images using a Convolutional Neural Network (CNN) with transfer learning.
 
-- Normal
-- Pneumonia
+The project uses the VGG16 architecture as a pretrained convolutional backbone and adds a custom classification head for binary classification between normal and pneumonia chest X-ray images.
 
-The project demonstrates how Artificial Intelligence can assist healthcare professionals by improving the speed and accuracy of pneumonia diagnosis.
+The main objective is to develop a model with high sensitivity for pneumonia detection, where minimizing false negatives is particularly important.
 
+---
 
-## 🎯 Problem Statement
+## Problem Statement
 
-Pneumonia is one of the leading causes of respiratory-related deaths worldwide. Manual interpretation of Chest X-rays requires experienced radiologists and may be time-consuming.
+Pneumonia diagnosis from chest X-ray images requires medical expertise and can be affected by workload, image variability, and limited access to specialist radiologists.
 
-The objective of this project is to build a deep learning model capable of automatically detecting pneumonia from Chest X-ray images with high accuracy.
-
-
-## 📂 Dataset
-
-**Dataset Source**
-
-Kaggle Chest X-ray Pneumonia Dataset
-
-The dataset contains pediatric Chest X-ray images classified into:
+This project investigates whether deep learning and transfer learning can be used to automatically classify chest X-ray images as:
 
 - Normal
 - Pneumonia
 
-The images were preprocessed before training the model.
+The system is designed as a potential decision-support tool and is not intended to replace clinical diagnosis.
 
+---
 
-## 🧠 Model Architecture
+## Objectives
 
-Transfer Learning
+- Develop a CNN-based binary image classification model for pneumonia detection.
+- Apply transfer learning using the pretrained VGG16 architecture.
+- Preprocess and normalize chest X-ray images for deep learning.
+- Use data augmentation to improve model generalization.
+- Address class imbalance using class weighting.
+- Apply fine-tuning to adapt pretrained features to the medical imaging domain.
+- Evaluate the model using accuracy, precision, recall, F1-score, and a confusion matrix.
+- Prioritize high recall for pneumonia cases to reduce false-negative predictions.
 
-Base Model:
+---
 
-- VGG16 (Pre-trained on ImageNet)
+## Dataset
 
-Additional Layers
+The project uses a chest X-ray image dataset containing two classes:
 
-- Global Average Pooling
-- Dense Layer
-- Batch Normalization
-- Dropout
-- Sigmoid Output Layer
+- Normal
+- Pneumonia
 
+The final evaluation was performed on an independent test set containing **624 images**.
 
-## ⚙️ Data Preprocessing
+The dataset has class imbalance, which was considered during model training and evaluation.
 
-The following preprocessing techniques were applied:
+---
 
-- Image resizing
-- Image normalization
-- Data augmentation
-- Class imbalance handling
-- Train / Validation / Test split
+## Methodology
 
+The project follows a two-phase transfer learning strategy.
 
-## 📊 Model Evaluation
+### 1. Image Preprocessing
 
-The model was evaluated using:
+The chest X-ray images are:
 
-- Accuracy
-- Precision
-- Recall
-- F1 Score
-- Confusion Matrix
+- Resized to `224 × 224 × 3`
+- Converted to three channels to match the VGG16 input requirements
+- Normalized from pixel values `[0, 255]` to `[0, 1]`
 
+### 2. Data Augmentation
 
-## 🛠 Technologies Used
+Training images are augmented using:
 
-- Python
-- TensorFlow
-- Keras
-- NumPy
-- Pandas
-- Matplotlib
-- Scikit-learn
-- OpenCV
-- Jupyter Notebook
+- Rotation: ±15°
+- Zoom: 0.2
+- Horizontal flipping
+- Width/height shifting: 0.1
 
+These transformations increase training-data diversity and help reduce overfitting.
 
-## 📁 Project Structure
+### 3. Transfer Learning
 
-```
-Pneumonia-Detection-CNN
-│
-├── dataset/
-├── images/
-├── models/
-├── notebooks/
-│   └── Pneumonia_Detection.ipynb
-├── reports/
-│   └── Pneumonia Detection Using CNN & TL.pdf
-│
-├── README.md
-├── requirements.txt
-├── LICENSE
-└── .gitignore
-```
+VGG16 is used as the pretrained convolutional backbone.
 
+The model is trained in two phases:
 
-## 🚀 Future Improvements
+**Phase 1 — Feature Extraction**
 
-- Deploy using Streamlit
-- Dockerize the application
-- Improve performance using EfficientNet
-- Train on larger medical datasets
-- Develop a real-time web application
+- Convolutional layers are frozen.
+- Only the custom classification head is trained.
+- Learning rate: `0.001`
+- Epochs: `10`
 
+**Phase 2 — Fine-Tuning**
 
-## 👨‍💻 Author
+- Selected higher convolutional layers are unfrozen.
+- The model is adapted to pneumonia-specific image patterns.
+- Learning rate is reduced to `1e-5`.
+- Training runs for up to 30 epochs.
+- Early stopping is applied.
 
-**Samyuktha Police**
+---
 
-MSc Data Science
+## Model Architecture
 
-XU Exponential University of Applied Sciences
+The VGG16 convolutional base is followed by a custom classification head:
 
-Germany
+```text
+VGG16 Convolutional Base
+        ↓
+Flatten
+        ↓
+Dense (256 units, ReLU)
+        ↓
+Batch Normalization
+        ↓
+Dropout (0.4–0.5)
+        ↓
+Dense (1 unit, Sigmoid)
+        ↓
+Binary Prediction
