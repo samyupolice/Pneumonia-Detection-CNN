@@ -1,140 +1,24 @@
-# Pneumonia Detection from Chest X-Ray Images Using CNN and Transfer Learning
-
-## Overview
-
-This project presents a deep learning approach for automated pneumonia detection from chest X-ray images using a Convolutional Neural Network (CNN) with transfer learning.
-
-The project uses the VGG16 architecture as a pretrained convolutional backbone and adds a custom classification head for binary classification between normal and pneumonia chest X-ray images.
-
-The main objective is to develop a model with high sensitivity for pneumonia detection, where minimizing false negatives is particularly important.
-
----
-
-## Problem Statement
-
-Pneumonia diagnosis from chest X-ray images requires medical expertise and can be affected by workload, image variability, and limited access to specialist radiologists.
-
-This project investigates whether deep learning and transfer learning can be used to automatically classify chest X-ray images as:
-
-- Normal
-- Pneumonia
-
-The system is designed as a potential decision-support tool and is not intended to replace clinical diagnosis.
-
----
-
-## Objectives
-
-- Develop a CNN-based binary image classification model for pneumonia detection.
-- Apply transfer learning using the pretrained VGG16 architecture.
-- Preprocess and normalize chest X-ray images for deep learning.
-- Use data augmentation to improve model generalization.
-- Address class imbalance using class weighting.
-- Apply fine-tuning to adapt pretrained features to the medical imaging domain.
-- Evaluate the model using accuracy, precision, recall, F1-score, and a confusion matrix.
-- Prioritize high recall for pneumonia cases to reduce false-negative predictions.
-
----
-
-## Dataset
-
-The project uses a chest X-ray image dataset containing two classes:
-
-- Normal
-- Pneumonia
-
-The final evaluation was performed on an independent test set containing **624 images**.
-
-The dataset has class imbalance, which was considered during model training and evaluation.
-
----
-
-## Methodology
-
-The project follows a two-phase transfer learning strategy.
-
-### 1. Image Preprocessing
-
-The chest X-ray images are:
-
-- Resized to `224 × 224 × 3`
-- Converted to three channels to match the VGG16 input requirements
-- Normalized from pixel values `[0, 255]` to `[0, 1]`
-
-### 2. Data Augmentation
-
-Training images are augmented using:
-
-- Rotation: ±15°
-- Zoom: 0.2
-- Horizontal flipping
-- Width/height shifting: 0.1
-
-These transformations increase training-data diversity and help reduce overfitting.
-
-### 3. Transfer Learning
-
-VGG16 is used as the pretrained convolutional backbone.
-
-The model is trained in two phases:
-
-**Phase 1 — Feature Extraction**
-
-- Convolutional layers are frozen.
-- Only the custom classification head is trained.
-- Learning rate: `0.001`
-- Epochs: `10`
-
-**Phase 2 — Fine-Tuning**
-
-- Selected higher convolutional layers are unfrozen.
-- The model is adapted to pneumonia-specific image patterns.
-- Learning rate is reduced to `1e-5`.
-- Training runs for up to 30 epochs.
-- Early stopping is applied.
-
----
-
 ## Model Architecture
 
 The VGG16 convolutional base is followed by a custom classification head:
 
-```text
-VGG16 Convolutional Base
-        ↓
-Flatten
-        ↓
-Dense (256 units, ReLU)
-        ↓
-Batch Normalization
-        ↓
-Dropout (0.4–0.5)
-        ↓
-Dense (1 unit, Sigmoid)
-        ↓
+VGG16 Convolutional Base  
+↓  
+Flatten  
+↓  
+Dense (256 units, ReLU)  
+↓  
+Batch Normalization  
+↓  
+Dropout (0.4–0.5)  
+↓  
+Dense (1 unit, Sigmoid)  
+↓  
 Binary Prediction
 
+The pretrained VGG16 convolutional base is used for feature extraction, while the custom classification head performs the final binary classification between Normal and Pneumonia.
+
 ---
-
-## Model Architecture
-
-The project uses VGG16 as a pretrained convolutional backbone for feature extraction. A custom classification head is added for binary classification.
-
-```text
-VGG16 Convolutional Base
-        ↓
-Flatten
-        ↓
-Dense Layer (256 units, ReLU)
-        ↓
-Batch Normalization
-        ↓
-Dropout
-        ↓
-Dense Layer (1 unit, Sigmoid)
-        ↓
-Normal / Pneumonia
-The pretrained convolutional layers provide reusable visual features, while the custom classification head learns features specific to the pneumonia detection task.
 
 ## Training Strategy
 
@@ -288,56 +172,64 @@ These challenges were addressed using class weighting, early stopping, dropout r
 
 ## Project Structure
 
-```text
 Pneumonia-Detection-CNN/
-│
 ├── images/
 │   ├── Training_Results.png
 │   ├── classification_report.png
 │   └── test_accuracy.png
-│
 ├── notebooks/
 │   └── Pneumonia_Detection.ipynb
-│
 ├── reports/
 │   └── Pneumonia Detection Using CNN & TL.pdf
-│
 ├── .gitignore
 ├── LICENSE
 ├── README.md
 └── requirements.txt
 
+---
+
 ## How to Run
 
 ### 1. Clone the Repository
 
-```bash
-git clone https://github.com/samyupolice/Pneumonia-Detection-CNN.git
-cd Pneumonia-Detection-CNN
+`git clone https://github.com/samyupolice/Pneumonia-Detection-CNN.git`
 
-pip install -r requirements.txt
+`cd Pneumonia-Detection-CNN`
 
-notebooks/Pneumonia_Detection.ipynb
+### 2. Install Dependencies
 
-**## Future Improvements**
-Train the model using larger and more diverse chest X-ray datasets.
-Increase the size of the validation set to improve evaluation reliability.
-Compare VGG16 with other transfer-learning architectures.
-Apply explainability techniques such as Grad-CAM.
-Evaluate the model on external datasets from different healthcare institutions.
-Improve generalization across different patient populations.
-Further optimize the model for potential clinical decision-support applications.
-Academic Report
+`pip install -r requirements.txt`
 
-A detailed academic report covering the theoretical background, dataset, methodology, implementation, experimental results, limitations, and discussion is available in the Reports folder.
+### 3. Open the Jupyter Notebook
 
-**## Disclaimer**
+Open the notebook located in the `notebooks/` directory:
+
+`notebooks/Pneumonia_Detection.ipynb`
+
+Run the notebook cells to reproduce the preprocessing, model training, evaluation, and analysis.
+
+---
+
+## Future Improvements
+
+- Train the model using larger and more diverse chest X-ray datasets.
+- Increase the size of the validation set to improve evaluation reliability.
+- Compare VGG16 with other transfer-learning architectures.
+- Apply explainability techniques such as Grad-CAM.
+- Evaluate the model on external datasets from different healthcare institutions.
+- Improve generalization across different patient populations.
+- Further optimize the model for potential clinical decision-support applications.
+
+---
+
+## Academic Report
+
+A detailed academic report covering the theoretical background, dataset, methodology, implementation, experimental results, limitations, and discussion is available in the `Reports` folder.
+
+---
+
+## Disclaimer
 
 This project was developed for academic and research purposes.
 
 The model is not a clinically validated medical diagnostic system and should not be used as a substitute for professional medical diagnosis.
-
-**One important point:** if your actual repository folder is named `Notebooks` rather than `notebooks`, change:
-
-```text
-notebooks/Pneumonia_Detection.ipynb
