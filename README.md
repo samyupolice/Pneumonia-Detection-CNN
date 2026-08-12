@@ -113,3 +113,211 @@ Dropout (0.4–0.5)
 Dense (1 unit, Sigmoid)
         ↓
 Binary Prediction
+
+## Model Architecture
+
+The project uses VGG16 as a pretrained convolutional backbone for feature extraction. A custom classification head is added for binary classification.
+
+```text
+VGG16 Convolutional Base
+        ↓
+Flatten
+        ↓
+Dense Layer (256 units, ReLU)
+        ↓
+Batch Normalization
+        ↓
+Dropout
+        ↓
+Dense Layer (1 unit, Sigmoid)
+        ↓
+Normal / Pneumonia
+The pretrained convolutional layers provide reusable visual features, while the custom classification head learns features specific to the pneumonia detection task.
+
+**## Training Strategy** 
+
+The model was trained using a two-phase transfer learning approach.
+
+Phase 1 — Feature Extraction
+
+The pretrained VGG16 convolutional layers were frozen while the custom classification head was trained.
+
+Phase 2 — Fine-Tuning
+
+Higher-level convolutional layers were unfrozen and fine-tuned using a lower learning rate to adapt the pretrained features to chest X-ray images.
+
+The training process used:
+
+Adam optimizer
+Binary cross-entropy loss
+Data augmentation
+Class weighting
+Dropout regularization
+Early stopping
+Reduced learning rate during fine-tuning
+
+**## Data Preprocessing**
+
+The chest X-ray images were preprocessed before being provided to the model.
+
+The preprocessing pipeline included:
+
+Resizing images to 224 × 224 pixels
+Converting grayscale images to 3-channel format for VGG16 compatibility
+Pixel-value normalization
+Training data augmentation
+
+The training augmentation included rotation, zoom, horizontal flipping, and width/height shifting.
+
+**## Handling Class Imbalance**
+
+The dataset contains more pneumonia images than normal images.
+
+Dataset Distribution
+Class	Images	Percentage
+Normal	1,583	27%
+Pneumonia	4,273	73%
+Total	5,863	100%
+
+The class imbalance was addressed using class-weighted training.
+
+Because of the imbalance, accuracy alone was not considered sufficient for evaluation. Precision, recall, F1-score, and confusion-matrix analysis were also used.
+
+**## Evaluation Metrics**
+
+The model was evaluated using:
+
+Accuracy
+Precision
+Recall
+F1-score
+Confusion Matrix
+
+Recall was particularly important for the pneumonia class because false-negative predictions can be more critical in a medical screening context.
+
+**## Results**
+
+The final evaluation was performed on an independent test set containing 624 images.
+
+Metric	Result
+Test Accuracy	~88–91%
+Precision — Normal	~0.97
+Recall — Normal	~0.70
+Precision — Pneumonia	~0.84
+Recall — Pneumonia	~0.99
+Overall F1-score	~0.88–0.91
+
+The model achieved very high recall for pneumonia cases, indicating strong sensitivity in detecting pneumonia images.
+
+**## Training Performance**
+
+Training accuracy increased to approximately 98–99%.
+
+The validation accuracy fluctuated because the validation set contained only 16 images, making the validation measurements statistically unstable.
+
+The training and validation loss curves showed convergence during training, although a moderate gap between training and test performance was observed.
+
+**## Key Findings**
+
+VGG16 transfer learning was effective for the pneumonia classification task.
+The model achieved approximately 88–91% test accuracy.
+Pneumonia recall reached approximately 0.99.
+The model produced relatively few false-negative pneumonia predictions.
+Some normal images were incorrectly classified as pneumonia.
+Class weighting helped address the imbalance between normal and pneumonia samples.
+Fine-tuning helped adapt pretrained VGG16 features to the chest X-ray classification task.
+
+**## Implementation Challenges**
+
+The main challenges encountered during implementation were:
+
+Validation accuracy instability due to the very small validation set.
+Class imbalance between normal and pneumonia images.
+Learning-rate sensitivity during fine-tuning.
+GPU memory management.
+
+These challenges were addressed using class weighting, early stopping, dropout regularization, and a reduced learning rate during fine-tuning.
+
+**## Limitations**
+
+The validation set contains only 16 images, which limits the reliability of validation metrics.
+The dataset is imbalanced toward pneumonia cases.
+The dataset consists of pediatric chest X-ray images.
+Performance on external hospital datasets has not been evaluated.
+The model has not undergone clinical validation.
+The model should not be considered a replacement for professional medical diagnosis.
+
+**## Technologies Used**
+
+Python
+TensorFlow
+Keras
+VGG16
+Convolutional Neural Networks (CNN)
+Transfer Learning
+NumPy
+Pandas
+Matplotlib
+Scikit-learn
+Jupyter Notebook
+
+**## Project Structure**
+
+Pneumonia-Detection-CNN/
+│
+├── images/
+│   ├── Training_Results.png
+│   ├── classification_report.png
+│   └── test_accuracy.png
+│
+├── notebooks/
+│   └── Pneumonia_Detection.ipynb
+│
+├── reports/
+│   └── Pneumonia Detection Using CNN & TL.pdf
+│
+├── .gitignore
+├── LICENSE
+├── README.md
+└── requirements.txt
+
+**## How to Run**
+
+1. Clone the repository
+git clone https://github.com/samyupolice/Pneumonia-Detection-CNN.git
+cd Pneumonia-Detection-CNN
+
+2. Install the required dependencies
+pip install -r requirements.txt
+
+3. Open the Jupyter Notebook
+Open:
+notebooks/Pneumonia_Detection.ipynb
+and run the notebook cells to reproduce the analysis and model training.
+
+**## Future Improvements**
+
+Future work could include:
+
+Training with a larger and more diverse chest X-ray dataset.
+Increasing the validation-set size.
+Comparing VGG16 with other transfer-learning architectures.
+Applying Grad-CAM or similar explainability techniques.
+Testing the model on external datasets.
+Improving generalization across different patient populations and healthcare institutions.
+Further optimizing the model for clinical decision-support applications.
+
+**## Academic Report**
+
+A detailed academic report describing the theoretical background, methodology, implementation, experimental results, limitations, and discussion is available in the Reports folder.
+
+**## Disclaimer**
+
+This project was developed for academic and research purposes.
+
+The model is not a clinically validated medical diagnostic system and should not be used as a substitute for professional medical diagnosis.
+
+The dataset figures and evaluation values above are taken from your project report: 5,863 total images, 1,583 normal, 4,273 pneumonia, and 624 test images. :contentReference[oaicite:1]{index=1} The reported test metrics are approximately 0.88–0.91 accuracy, 0.84 pneumonia precision, and 0.99 pneumonia recall. :contentReference[oaicite:2]{index=2}
+
+**One thing:** before you paste the `Project Structure` section, make sure your actual GitHub folder capitalization matches it (`Images` vs `images`, `Notebooks` vs `notebooks`, etc.). If your repository uses capital letters, we'll change those names in the README so the links work correctly.
+
